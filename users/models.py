@@ -37,9 +37,9 @@ class Profile(BaseModel):
         super(Profile, self).save(*args, **kwargs) # Call the real save() method
 
 class User(BaseModel , AbstractUser):
-    user_permission=models.ForeignKey("core.AppPermission",on_delete=models.CASCADE)
-    prof=models.ForeignKey("users.Profile",on_delete=models.CASCADE)
-
+    user_permission = models.ForeignKey("core.AppPermission",on_delete=models.CASCADE)
+    prof = models.ForeignKey("users.Profile",on_delete=models.CASCADE)
+    chat_room = models.ForeignKey("chat.ChatRoom",on_delete=models.CASCADE)
     def __str__(self):
 
         return self.reference
