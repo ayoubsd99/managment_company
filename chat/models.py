@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
 from core.models import BaseModel
@@ -31,7 +30,7 @@ class ChatRoom(BaseModel):
 class Message(BaseModel):
     sender = models.ForeignKey("users.User",on_delete=models.CASCADE)
     content = models.TextField()
-    atachement = ArrayField(models.CharField(max_length=150),null=True)
+    is_read = models.BooleanField(default=False)
 
 
     def __str__(self):

@@ -40,11 +40,9 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS += [
-   # 'core.apps.CoreConfig',
-    #'users.apps.UsersConfig',
-    #'chat.apps.ChatConfig',
-    #'celery',
-    #'django_celery_results',
+    'core.apps.CoreConfig',
+    'users.apps.UsersConfig',
+    'chat.apps.ChatConfig',
 ] 
 
 MIDDLEWARE = [
@@ -126,4 +124,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-#AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'

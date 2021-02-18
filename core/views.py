@@ -7,4 +7,4 @@ import string
 
 def _genref(length):
     letters = string.hexdigits
-    return ''.join(random.choice(letters) for i in length)
+    return ''.join(random.choice(letters) for i in range(length))

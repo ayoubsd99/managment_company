@@ -85,6 +85,7 @@ class Prime(BaseModel):
 class Renion(BaseModel):
     target = models.ForeignKey("users.User",on_delete=models.CASCADE)
     date_renion = models.DateTimeField()
+    status = models.ForeignKey("users.RenionStatus",on_delete=models.CASCADE)     
 
     def __str__(self):
 
@@ -131,4 +132,10 @@ class SignaleStatus(models.Model):
     label = models.CharField(max_length=50)
 
     def __str__(self):
-        return sefl.label    
+        return self.label    
+
+class RenionStatus(models.Model):
+    label = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.label    
