@@ -1,0 +1,43 @@
+{% extends 'administration/base/index.html' %}
+
+
+
+{% block content %}
+<div class="row signaledetails">
+        <div>
+            <h1>
+                Signal Details
+            </h1>
+            <div>
+                <center>
+                    <img src="{{signale.target.prof.miniature}}" alt="">
+                </center>
+                <h4>Tarrget : {{signale.terget.prof.getfull_name}}</h4>
+                <h5>User Permission : {{signale.terget.user_permission}} </h5>
+                <h5>Signale Status : {{segnale.status.label}}</h5>
+                <label for="">Description : </label><p>{{signale.Description}}</p>
+            </div>
+            <div class='row'>
+                <form method='POST'>
+                    {% csrf_token %}
+                    <div class="col-md-6">
+                        <label for="" class="form-label">Status</label>
+                        <select class="form-select" name="status" id="validationDefault04" >
+                            {% for st in status %}
+                            {% if st.label == 'studying' %}
+                            <option selected value="{{st.label}}">{{st.label}}</option>
+                            {%else%}
+                            <option  value="{{st.label}}">{{st.label}}</option>
+                            {% endif %}
+                          
+                            {% endfor %}
+                          </select>
+                      </div>
+                    <div class="col-6">
+                      <button class="btn btn-primary" type="submit">Update Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

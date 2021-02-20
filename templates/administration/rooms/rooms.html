@@ -1,0 +1,42 @@
+{% extends 'administration/base/index.html' %}
+
+
+
+{% block content %}
+<div class="container row">
+    <div>
+        <h1>
+            rooms
+        </h1>
+
+        
+      <table class="responsive-table centered highlight">
+        <thead>
+          <tr>
+              <th>#</th>
+              <th>Room Name</th>
+              <th>Date Created</th>
+              <th>Delete</th>
+              <th>view Members</th>
+          </tr>
+        </thead>
+
+        <tbody>
+              {% for room in rooms %}
+            <tr>
+                <td></td>
+                <td>{{room.room_name}}</td>
+                <td>{{room.created_at}}</td>
+                {% if room.deleted == False %}
+                <td><a class=' btn cyan accent-2' href="{% url 'deleteroom' room %}">Active</a></td>
+                {% else %}
+                <td><a class="btn red darken-1"  href="{% url 'deleteroom' room %}">not active</a></td>
+                {% endif %}
+                <td><a class="btn orange lighten-4" href="{% url 'room' room.reference %}">Views</a></td>
+            </tr>
+              {% endfor %}
+        </tbody>
+      </table>
+    </div>
+</div>
+{% endblock %}

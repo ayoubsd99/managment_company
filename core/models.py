@@ -16,19 +16,19 @@ class BaseModel(models.Model):
         abstract = True
 
 class AppPermission(models.Model):
-    label = models.CharField(max_length=50)
+    label = models.CharField(max_length=50,unique=True)
 
     def __str__(self):
         return self.label
 
 class Country(models.Model):
-    label = models.CharField(max_length=50)
+    label = models.CharField(max_length=50,unique=True)
 
     def __str__(self):
         return self.label
 
 class City(models.Model):
-    label = models.CharField(max_length=100)
+    label = models.CharField(max_length=100,unique=True)
     coutry = models.ForeignKey("core.Country",on_delete=models.CASCADE,default='Moroco')
 
     def __str__(self):

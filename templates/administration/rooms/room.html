@@ -1,0 +1,57 @@
+{% extends 'administration/base/index.html' %}
+
+
+
+{% block content %}
+<div class="container row">
+    <div>
+        <h1>
+            room details
+        </h1>
+
+      <table class="responsive-table centered highlight">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>full Name</th>
+                <th>Permission</th>
+                <th>email</th>
+                <th>Phone</th>
+                 <th>is Active</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td><img class="user_image" src='{{admin.prof.miniature}}' alt="user miniature"></td>
+                <td>{{admin.prof.getfull_name}}</td>
+                <td>{{admin.user_permission}}</td>
+                <td>{{admin.prof.email}}</td>
+                <td>{{admin.prof.phone}}</td>
+                <td>
+                    <a class='btn  cyan accent-2' disabled='disabled'>Active</a>        
+                </td>>
+            </tr>
+              {% for user in users %}
+         
+                <tr>
+                    <td><img class="user_image" src='{{user.prof.miniature}}' alt="user miniature"></td>
+                    <td>{{user.prof.getfull_name}}</td>
+                    <td>{{user.user_permission}}</td>
+                    <td>{{user.prof.email}}</td>
+                    <td>{{user.prof.phone}}</td>
+                    <td>
+                     <!--  {% if user.deleted == False %} 
+                        <a class='btn  cyan accent-2' href="{% url 'deleteuser' user.reference %}">Active</a>
+                        {% else %}
+                        <td> <a class='btn  red darken-1' href="{% url 'deleteuser' user.reference %}">NoActive</a></td>
+                        {% endif %}
+                    </td>
+                    -->
+            </tr>
+              {% endfor %}
+        </tbody>
+      </table>
+    </div>
+</div>
+{% endblock %}

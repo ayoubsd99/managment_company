@@ -1,0 +1,36 @@
+{% extends 'administration/base/index.html' %}
+{% block css %}
+<style>
+    .detail_user{
+        display: flex;
+        flex-direction:column;
+    }
+</style>
+ {% endblock %}
+{% block content %}
+
+<!-- Page Content -->
+<h1>
+    Details user
+</h1>
+    <div class='detalis_user'>
+        <div>
+            <img style='width:200px;'  src='{{user.prof.miniature}}' alt="user">
+        </div>
+        <div>
+            <h3> Full-name : {{user.prof.getfull_name}}</h2>
+            <h3>E-mail : {{user.prof.email}}</h3>
+            <h4>Phone number : {{user.prof.phone}}</h4>
+            <h4>Chat Room : {{user.chat_room.room_name}}</h4>
+            <h5>Description:</h5>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit ipsum dolorum, voluptatem commodi provident incidunt velit ex fugiat quae? A quasi magni dolorum qui voluptatem dolores quo rerum tenetur vero?</p>
+        </div>
+    </div>
+
+ 
+{% endblock %}
+
+
+{% block scripts %}
+
+{% endblock %}

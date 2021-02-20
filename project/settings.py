@@ -77,6 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+AUTH_USER_MODEL = "users.User"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -107,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -126,11 +128,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-AUTH_USER_MODEL = 'users.User'
 
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    '/var/www/static/',
+]
 
 cloudinary.config( 
-  cloud_name = "sample", 
-  api_key = "874837483274837", 
-  api_secret = "a676b67565c6767a6767d6767f676fe1" 
+  cloud_name = "dgjvthpnh", 
+  api_key = "875298853688417", 
+  api_secret = "0nkrKbN5bPew17Ntax3BzzMzCXo" 
 )

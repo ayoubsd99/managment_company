@@ -10,7 +10,7 @@ import re
 # for validating an Email 
 regex_em = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 # for custom mails use: '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$' 
-regex_ph = '\d{3}[-\.\s]\d{3}[-\.\s]\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]\d{4}|\d{3}[-\.\s]\d{4}'      
+regex_ph = "\w{3}-\w{3}-\w{4}"    
 
 def _genref(length):
     letters = string.hexdigits

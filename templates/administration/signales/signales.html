@@ -1,0 +1,44 @@
+{% extends 'administration/base/index.html' %}
+
+
+
+{% block content %}
+<div class="row">
+    <div>
+        <div>
+            <h1>
+                Primes
+            </h1>
+
+            <a class='btn  brown darken-1' href="{% url 'createprime' %}">Add New +</a>
+        </div>
+      <table class="responsive-table centered highlight">
+        <thead>
+          <tr>
+              <th>#</th>
+              <th>User Target</th>
+              <th>Permission Target</th>
+              <th>Signale Status</th>
+              <th>Date Created</th>
+              <th>Update Signale</th>
+              <th>View More</th>
+          </tr>
+        </thead>
+
+        <tbody>
+              {% for signale in signales %}
+            <tr>
+                <td></td>
+                <td>{{signale.target.prof.getfull_name}}</td>
+                <td>{{signale.target.user_permission}}</td>
+                <td>{{signale.status.label}</td>
+                <td>{{signale.created_at}}</td>
+                <td><a class='btn green accent-1' href="">Update</a></td>
+                <td><a class='btn green accent-1' href="">Update</a></td>
+                <td><a class='btn green accent-1' href="">Update</a></td>
+            </tr>
+              {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}

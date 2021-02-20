@@ -1,0 +1,44 @@
+{% extends 'administration/base/index.html' %}
+
+
+
+{% block content %}
+<div class="container row">
+    <div>
+        <div>
+            <h1>
+                Meetings
+            </h1>
+
+            <a class='btn  brown darken-1' href="{% url 'createmeeting' %}">Add New +</a>
+        </div>
+       
+        
+      <table class="responsive-table centered highlight">
+        <thead>
+          <tr>
+              <th>#</th>
+              <th>User Target</th>
+              <th>Permission Target</th>
+              <th>Date Meet</th>
+              <th>Metting Status</th>
+              <th>Update Meeting</th>
+          </tr>
+        </thead>
+
+        <tbody>
+              {% for meeting in meetings %}
+            <tr>
+                <td></td>
+                <td>{{meeting.target.prof.getfull_name}}</td>
+                <td>{{meeting.target.user_permission}}</td>
+                <td>{{meeting.date_renion}}</td>
+                <td>{{meeting.status}}</td>
+                <td><a class='btn green accent-1' href="">Update</a></td>
+            </tr>
+              {% endfor %}
+        </tbody>
+      </table>
+    </div>
+</div>
+{% endblock %}

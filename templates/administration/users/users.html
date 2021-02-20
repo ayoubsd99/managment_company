@@ -1,0 +1,60 @@
+{% extends 'administration/base/index.html' %}
+
+{% block content %}
+
+<!-- Page Content -->
+
+    <div>
+    <h1>list of users</h1>
+    <a href="{% url 'createuser' %}" class='btn deep-purple accent-1'>New User +</a>
+    </div>
+    <table class="responsive-table centred highlight " style='width:100%;'>
+        <thead>
+          <tr>
+            <th>Image</th>
+              <th>full Name</th>
+              <th>Permission</th>
+              <th>email</th>
+              <th>Phone</th>
+              <th>is Active</th>
+              <th>Update</th>
+              <th>Delete</th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+     
+         
+          {% for user in users %}
+          {% if user.is_superuser == True %}
+           
+          {% else %}
+          <tr>
+            <td><img class="user_image" src='{{user.prof.miniature}}' alt="user miniature"></td>
+            <td>{{user.prof.getfull_name}}</td>
+            <td>{{user.user_permission}}</td>
+            <td>{{user.prof.email}}</td>
+            <td>{{user.prof.phone}}</td>
+            <td>
+                {% if user.deleted == False %} 
+                <a class='btn  cyan accent-2' href="{% url 'deleteuser' user.reference %}">Active</a>
+                {% else %}
+                <td> <a class='btn  red darken-1' href="{% url 'deleteuser' user.reference %}">NoActive</a></td>
+                {% endif %}
+            </td>
+            <td> <a class='btn btn-info btn-sm' href="{% url 'updateuser' user.reference %}">Update</a></td>
+            <td><a class="btn waves-effect waves-light red lighten-2" href="{% url 'user' user.reference %}">Details</a></td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+
+ 
+{% endblock %}
+
+
+{% block scripts %}
+
+{% endblock %}

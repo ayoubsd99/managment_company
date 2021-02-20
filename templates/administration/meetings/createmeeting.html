@@ -1,0 +1,45 @@
+{% extends 'administration/base/index.html' %}
+
+
+
+{% block content %}
+<div class="container row">
+    <form class="row g-3" method="post"  >{% csrf_token %}
+        <div class="col-md-8">
+            <label for="" class="form-label">Users</label>
+            <select class="form-select" name="target" id="validationDefault04" >
+                <option selected disabled value="">Choose user for meeting</option>
+                <hr>
+                <option  disabled >Manager</option>
+                {% for m in managers %}
+                <option value="{{m.reference}}">{{m.prof.getfull_name}}</option>
+                {% endfor %}
+                <option  disabled >Seller</option>
+                {% for s in sellers %}
+                <option value="{{s.reference}}">{{s.prof.getfull_name}}</option>
+                {% endfor %}
+              </select>
+          </div>
+        <div class="col-md-12">
+          <label for="" class="form-label">Date Meeting</label>
+          <input type="date" class="form-control"  value="" id="" name="date_meeting" required>
+        </div>
+        <div class="col-md-12">
+          <label for="" class="form-label">Status</label>
+        <select class="form-select" name="status" id="validationDefault04" >
+            {% for st in status %}
+            {% if st.label == 'Pending' %}
+            <option selected value="{{st.label}}">{{st.label}}</option>
+            {%else%}
+            <option  value="{{st.label}}">{{st.label}}</option>
+            {% endif %}
+          
+            {% endfor %}
+          </select>
+      </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Save User</button>
+        </div>
+      </form>
+</div>
+{% endblock %}

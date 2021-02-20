@@ -2,57 +2,70 @@ from django.shortcuts import  render,redirect,get_object_or_404
 from django.views import View
 from django.contrib import  messages
 
+from time import sleep
+from asgiref.sync import sync_to_async
+import asyncio
 import cloudinary.uploader
+from django.utils.decorators import classonlymethod
 
 from users.models import User,Profile
 from chat.models import ChatRoom
 from core.views import check_email,check_phone
-from core.models import AppPermission
+from core.models import AppPermission,City,Country
 
-APPLICATION = 'administration'
+APPLICATION = 'administration/users'
 
 class UsersView(View):
+    view_name = 'users'
+    template = f'{APPLICATION}/{view_name}.html'
     def get(self,request,*args,**kwargs):
-        view_name = 'users'
-        template = f'{APPLICATION}/{view_name}.html'
         context = {
-            "users":User.objects.filter(user_permission__in=['manager','seller'])
+            "users":User.objects.all()
         }
         return render(request,self.template,context)
 
 class UserView(View):
+    view_name = 'user'
+    template = f'{APPLICATION}/{view_name}.html'
     def get(self,request,*args,**kwargs):
-        view_name = 'user'
-        template = f'{APPLICATION}/{view_name}.html'
+       
         user_ref = kwargs.get('user_reference')
         context = {
-            "users":get_object_or_404(User,reference=user_ref)
+            "user":get_object_or_404(User,reference=user_ref)
         }
         return render(request,self.template,context)
 
-def DeleteUser(request):
-    user_ref = request.GET.get('user_reference')
-    user = get_object_or_404(User,reference=user_ref)
+class DeleteUser(View):
+    def get(self,request,*args,**kwargs):
+            
+        user_ref = kwargs.get('user_reference')
+        user = get_object_or_404(User,reference=user_ref)
+        user.deleted = not user.deleted
+        user.save()
+        messages.success(request,'user desactivted successfuly')
+        return redirect('users') 
 
-    user.deleted = not deleted
-    messages.success(request,'user desactivted successfuly')
-    return redirect('users') 
+class CreateUserView(View):
 
-class CreateUser(View):
     view_name = 'createuser'
     template = f'{APPLICATION}/{view_name}.html'
     def get(self,request,*args,**kawargs):
         context = {
-            'managesrs':User.objects.filter(user_permission="manager").filter(dalated=False),
-            'permissions': AppPermission.objects.filter(label__in=['manager','seller'])
+            'managers':User.objects.filter(deleted=False),
+            'permissions': AppPermission.objects.all(),
+            'cities':City.objects.all(),
+            'countries':Country.objects.all(),
         }
         return render(request,self.template,context)
+    
     def post(self,request,*args,**kwargs):
 
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')    
         email = request.POST.get('email')    
-        phone = request.POST.get('phone')    
+        phone = request.POST.get('phone')
+        country =  request.POST.get('country')
+        city =  request.POST.get('city')
         miniature = request.FILES["miniature"]
         username = request.POST.get('username')    
         password = request.POST.get('password')    
@@ -62,131 +75,160 @@ class CreateUser(View):
 
         if(fname =='' or lname =='' or email =='' or phone =='' or username =='' or password =='' or code_bank =='' or permission == ''):
             messages.warning(request,'all fields are required')
+            print('creaty fileds')
+            
 
         elif not check_email(email):
             messages.warning(request,'email user not valide try add an other one')
-        elif not check_phone(phone):
-            messages.warning(request,'phone number not valid try add an other one')
+            print('email fileds')
+        #elif not check_phone(phone):
+        #    messages.warning(request,'phone number not valid try add an other one')
+        #    print('phone fileds')
+
         elif permission == 'manager':
-            name = f'Mr-{lname}-room' 
+            name = f'Mr-{lname}-{fname}-room' 
             try:
                 response = cloudinary.uploader.upload(miniature)
                 url = response['secure_url']
-                chat_room = ChatRoom(room_name=name)
-                prof = Profile(lname=lname,fname=fname,phone=phone,email=email,miniature=url)
-                permi = get_object_or_404(AppPermission,label=permission)
-                user = User(prof=prof,user_permission=permi,chat_room=chat_room)
-                chat_room.save()
-                prof.save()
-                user.save()
+                chat_room =  ChatRoom.objects.create(room_name=name)
+                print(chat_room)
+                permi =   get_object_or_404(AppPermission,label=permission)
+                print(permi)
+                city =   get_object_or_404(City,label=city)
+                country =   get_object_or_404(Country,label=country)
+                sleep(5)
+                prof=   Profile.objects.create(fname=fname,city=city,country=country,lname=lname,phone=phone,email=email,code_bank=code_bank,miniature=url)
+                sleep(5)
+                print("profile")
+                user =    User.objects.create(prof=prof,user_permission=permi,chat_room=chat_room,username=username,password=password)
+                print(user)
                 messages.success(request,'manager added successfuly')
                 return redirect('users')
             except:
-                messages.error(requset,'faield to add manager ')
+                messages.error(request,'faield to add manager ')
+                print('manager not add')
                 return redirect('createuser')
         elif permission == 'seller':
             if(manager == ''):
                 messages.warning(request,'please sekect sum manager for that seller')
+                print('vide maneger')
                 return redirect('createuser')
             try:
-                response = cloudinary.uploader.upload(miniature)
+                response =  cloudinary.uploader.upload(miniature)
                 url = response['secure_url']
-                prof_m = Profile.objects.get(lname=manager)
-                manage = get_object_or_404(User,user_permission='manager',prof=prof_m)
-                prof = Profile(lname=lname,fname=fname,phone=phone,email=email,miniature=url)
+                print(manager)
+                manage = get_object_or_404(User,reference=manager)
+                print(manage)
                 permi = get_object_or_404(AppPermission,label=permission)
-                user = User(prof=prof,user_permission=permi,chat_room=manage.chat_room)
-                prof.save()
-                user.save()
+                print(permi)
+                city =   get_object_or_404(City,label=city)
+                print(city)
+                country =   get_object_or_404(Country,label=country)
+                print(country)
+                print(manage.chat_room)
+                chat_room=get_object_or_404(ChatRoom,reference=manage.chat_room)
+                print(chat_room.room_name)
+                prof=   Profile.objects.create(fname=fname,city=city,country=country,lname=lname,phone=phone,email=email,code_bank=code_bank,miniature=url)
+                print(prof.lname)
+                user =   User.objects.create(prof=prof,user_permission=permi,chat_room=chat_room,username=username,password=password)
                 messages.success(request,'seller added successfuly')
                 return redirect('users')
             except:
-                messages.error(requset,'faield to add seller')
+                messages.error(request,'faield to add seller')
+                print("faield to add seller")
                 return redirect('createuser')
             else:
-                messages.error(request,'failed to add some user error data base')    
+                messages.error(request,'failed to add some user error data base')   
+        return redirect('createuser')
 
-class UpdateUser(View):
+class UpdateUserView(View):
     view_name = 'updateuser'
     template = f'{APPLICATION}/{view_name}.html'
     def get(self,request,*args,**kwargs):
         user_ref = kwargs.get('user_reference')
         user = get_object_or_404(User,reference=user_ref)
-        if user.user_permission.label == 'manager':
-            context = {
-                'user':get_object_or_404(User,reference=user_ref)
-                }
-        else:
-            context = {
-                'user':get_object_or_404(User,reference=user_ref),
-                'managers':User.objects.filter(deleted=False,user_permission='manager')
-                }                    
+        if user.deleted == True:
+            messages.warning(request,'this user is not active try activated him the apdated')
+            return redirect("users")
+        context = {
+        'user':user,
+        'managers':User.objects.filter(deleted=False),
+        'permissions':AppPermission.objects.all(),
+        'cities':City.objects.all(),
+        'countries':Country.objects.all(),
+        }                    
         return render(request,self.template,context)
 
     def post(self,request,*args,**kwargs):
-
-        reference = request.POST.get('reference')
+        reference = kwargs.get('user_reference')
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')    
         email = request.POST.get('email')    
-        phone = request.POST.get('phone')    
-        miniature = request.FILES["miniature",None]
+        phone = request.POST.get('phone')  
+        permission = request.POST.get('permission')  
+        code_bank = request.POST.get('code_bank')    
+        miniature = request.FILES.get("miniature",False)
         username = request.POST.get('username')    
-        manager = request.POST.get('manager')
+        manager = request.POST.get('manager',False)
+        city = request.POST.get('city')
+        country = request.POST.get('country')
 
-        if(fname =='' or lname =='' or email =='' or phone =='' or username =='' or password =='' or code_bank =='' or permission == ''):
+
+        if(fname =='' or lname =='' or email =='' or phone =='' or username ==''  or code_bank =='' or permission == ''):
             messages.warning(request,'all fields are required')
 
         elif not check_email(email):
             messages.warning(request,'email user not valide try add an other one')
-        elif not check_phone(phone):
-            messages.warning(request,'phone number not valid try add an other one')
+        #elif not check_phone(phone):
+        #    messages.warning(request,'phone number not valid try add an other one')
+        
         elif permission == 'manager':
-            name = f'Mr-{lname}-room' 
             try:
                 user = get_object_or_404(User,reference=reference)
-                prof =get_object_or_404(Profile,user.prof)
-                if miniature is not None:
+                print(user)
+                city=get_object_or_404(City,label=city)
+                country=get_object_or_404(Country,label=country)
+                perm=get_object_or_404(AppPermission,label=permission)
+                if miniature is not False:
+                    print('img fdalse')
                     response = cloudinary.uploader.upload(miniature)
-                    prof.miniature= response['secure_url']
-                prof.fname=fname
-                prof.fname=lname    
-                prof.fname=email    
-                prof.fname=phone    
-                prof.fname=username    
-                prof.save()
+                    prof = Profile.objects.filter(email=email).update(miniature=response['secure_url'])
+
+                prof = Profile.objects.filter(email=email).update(fname=fname,lname=lname,city=city,country=country,email=email,phone=phone,code_bank=code_bank)
                 messages.success(request,'manager updated successfuly')
                 return redirect('users')
             except:
-                messages.error(requset,'faield to update manager ')
-                return redirect('createuser')
+                messages.error(request,'faield to update manager ')
+                return redirect('users')
         elif permission == 'seller':
-            if(manager == ''):
-                messages.warning(request,'please sekect sum manager for that seller')
-                return redirect('createuser')
+            print('hihihi')
             try:
+                print('hihihi')
+                city=get_object_or_404(City,label=city)
+                country=get_object_or_404(Country,label=country)   
                 user = get_object_or_404(User,reference=reference)
-                prof =get_object_or_404(Profile,user.prof)
-                if miniature is not None:
+
+                if miniature is not False:
+                    print('img fdalse')
+                    print(user.prof)
                     response = cloudinary.uploader.upload(miniature)
-                    prof.miniature= response['secure_url']
-                manager_prof = get_object_or_404(Profile,email=manager)    
-                manag = User.objects.filter(user_permission='manager',prof=manager_prof)
-                room =  manag.chat_room    
-                prof.fname=fname
-                prof.fname=lname    
-                prof.fname=email    
-                prof.fname=phone    
-                prof.fname=username
-                user = get_object_or_404(User,prof=prof)
-                user.chat_room= room    
-                prof.save()
-                user.save()
+                    prof=Profile.objects.filter(reference=user.prof).update(miniature=response['secure_url'])
+                    messages.success(request,'image updated successfuly')
+                print('image updated')
+                #if manager is not False:
+                #    print('room not false')
+                #    prof=Profile.objects.filter(reference=user.prof).update(fname=fname,lname=lname,city=city,country=country,email=email,phone=phone,code_bank=code_bank
+                #    manage = get_object_or_404(User,reference=manager)
+                #    room = get_object_or_404(ChatRoom,reference=manage.chat_room)
+                #    user = get_object_or_404(User,reference=reference)
+                #    user.objects.filter(reference=user.prof).update(chat_room=room)
+                print('room updated')
+                prof=Profile.objects.filter(reference=user.prof).update(fname=fname,lname=lname,city=city,country=country,email=email,phone=phone,code_bank=code_bank)
                 messages.success(request,'seller updated successfuly')
                 return redirect('users')
             except:
-                messages.error(requset,'faield to update seller')
-                return redirect('createuser')
-            else:
+                messages.error(request,'faield to update seller')
+                return redirect('users')
+        else:
                 messages.error(request,'failed to update user error data base')    
-         
+        return redirect('users') 

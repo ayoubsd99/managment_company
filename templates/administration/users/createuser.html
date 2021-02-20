@@ -1,0 +1,105 @@
+{% extends 'administration/base/index.html' %}
+
+{% block content %}
+
+<!-- Page Content -->
+<section>
+    <h1>
+        create user
+    
+    </h1>
+    <div class="row">
+        <form class="row g-3" method="post" enctype="multipart/form-data" >{% csrf_token %}
+            <div class="col-md-4">
+              <label for="" class="form-label">First name</label>
+              <input type="text" class="form-control"  value="" id="" name="fname" required>
+            </div>
+            <div class="col-md-4">
+              <label for="" class="form-label">Last name</label>
+              <input type="text" class="form-control"  value="" id="" name="lname" required>
+            </div>
+            <div class="col-md-4">
+                <label for="" class="form-label">username</label>
+                <input type="text" class="form-control"  value="" id="" name="username" required>
+              </div>
+            <div class="col-md-6">
+              <label for="" class="form-label">Phone Number</label>
+              <input type="text" class="form-control"  value="" id="" name="phone" required>
+            </div>
+            <div class="col-md-3">
+              <label for="validationDefault04" class="form-label">Country</label>
+              <select class="form-select" name="country" id="validationDefault04" required>
+                <option selected disabled value="">Choose user country ...</option>
+                {% for country in countries %}
+                 
+                <option value="{{country.label}}">{{country.label}}</option>
+               
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+                <label for="validationDefault04" class="form-label">City</label>
+                <select class="form-select" name="city" id="validationDefault04" required>
+                  <option selected disabled value="">Choose user city ...</option>
+                  {% for city in cities %}
+                 
+                  <option value="{{city.label}}">{{city.label}}</option>
+                 
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="" class="form-label">E-mail</label>
+                <input type="email" name="email" value="" class="form-control" id="" required>
+              </div>
+              <div class="col-md-6">
+                <label for="" class="form-label">Password </label>
+                <input type="password" name="password" autocomplete="off" style="text-security:disc; -webkit-text-security:disc;"  value="" class="form-control" id="" required>
+              </div>
+              <div class="col-md-6">
+                <label for="" class="form-label">Permission </label>
+                <select class="form-select" name="permission" id="validationDefault04" required>
+                  <option selected disabled value="">Choose user permission</option>
+                  {% for per in permissions %}
+                    {% if per.label == "admin" %}
+                    {% else %}
+                    <option value="{{per.label}}">{{per.label}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="" class="form-label">Image User </label>
+                <input type="file" name="miniature" class="form-control" id="" required>
+              </div>
+              <div class="col-md-6">
+                <label for="" class="form-label">Code Bank</label>
+                <input type="text"  value="" class="form-control" id="" name="code_bank" required>
+              </div>
+              <div class="col-md-6">
+                <label for="" class="form-label">manager</label>
+                <select class="form-select" name="manager" id="validationDefault04" >
+                    <option selected disabled value="">Choose manager if you create a seller</option>
+                    {% for m in managers %}
+                    {% if m.is_superuser == True %}
+                    {% else %}
+                    <option value="{{m.reference}}">{{m.prof.getfull_name}}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+              </div>
+            <div class="col-12">
+              <button class="btn btn-primary" type="submit">Save User</button>
+            </div>
+          </form>
+      </div>
+</section>
+ 
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+
+</script>
+{% endblock %}
